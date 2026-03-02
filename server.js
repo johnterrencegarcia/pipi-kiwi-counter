@@ -5,9 +5,8 @@ app.use(express.json());
 // Store data for multiple Roblox accounts
 let accounts = new Map();
 
-// All Brainrot rarities and types from the actual game
+// All Brainrot data with rarities and incomes
 const BRAINROT_DATA = {
-  // Common ($2-15/s)
   common: [
     { name: "Noobini Cakenini", income: 2, icon: "🎂" },
     { name: "Lirili Larila", income: 4, icon: "🐘" },
@@ -18,11 +17,10 @@ const BRAINROT_DATA = {
     { name: "Pipi Kiwi", income: 13, icon: "🥝" },
     { name: "Pipi Corni", income: 15, icon: "🌽" }
   ],
-  // Uncommon ($20-120/s)
   uncommon: [
     { name: "Trippi Troppi", income: 20, icon: "🦐" },
     { name: "Gangster Footera", income: 30, icon: "🦶" },
-    { name: "Bobrito Bandito", icon: "🦦" },
+    { name: "Bobrito Bandito", income: 35, icon: "🦦" },
     { name: "Boneca Ambalabu", income: 40, icon: "🎭" },
     { name: "Cacto Hipopotamo", income: 50, icon: "🌵" },
     { name: "Ta Ta Ta Sahur", income: 60, icon: "🥁" },
@@ -30,11 +28,10 @@ const BRAINROT_DATA = {
     { name: "67", income: 90, icon: "🔢" },
     { name: "Pipi Avocado", income: 120, icon: "🥑" }
   ],
-  // Rare ($100-275/s)
   rare: [
     { name: "Cappuccino Assassino", income: 100, icon: "☕" },
     { name: "Brr Brr Patapim", income: 120, icon: "🌲" },
-    { name: "Trulimero Trulichina", income: 135, icon: "🎪" },
+    { name: "Trulimero Trulicina", income: 135, icon: "🎪" },
     { name: "Bambini Crostini", income: 150, icon: "🥖" },
     { name: "Bananita Dolphinita", income: 170, icon: "🐬" },
     { name: "Perochello Lemonchello", income: 190, icon: "🍋" },
@@ -43,7 +40,6 @@ const BRAINROT_DATA = {
     { name: "Penguino Cocosino", income: 250, icon: "🥥" },
     { name: "Ti Ti Ti Sahur", income: 275, icon: "🎵" }
   ],
-  // Epic ($290-1.4K/s)
   epic: [
     { name: "Burbaloni Luliloli", income: 290, icon: "🍭" },
     { name: "Chimpanzini Bananini", income: 475, icon: "🍌" },
@@ -51,15 +47,14 @@ const BRAINROT_DATA = {
     { name: "Chef Crabracadabra", income: 625, icon: "🦀" },
     { name: "Lionel Cactuseli", income: 700, icon: "🦁" },
     { name: "Glorbo Fruttodrillo", income: 775, icon: "🐊" },
-    { name: "Strawberrilli Flamengilli", income: 925, icon: "💃" },
+    { name: "Blueberrinni Octopussini", income: 850, icon: "🐙" },
+    { name: "Strawberrelli Flamingelli", income: 925, icon: "💃" },
     { name: "Pandaccini Bananini", income: 1000, icon: "🐼" },
     { name: "Sigma Boy", income: 1100, icon: "🐺" },
     { name: "Pi Pi Watermelon", income: 1200, icon: "🍉" },
-    { name: "Blueberrinni Octopussini", income: 1270, icon: "🐙" },
     { name: "Cocosini Mama", income: 1300, icon: "👩" },
     { name: "Guesto Angelic", income: 1400, icon: "👼" }
   ],
-  // Legendary (1.5K-5K/s)
   legendary: [
     { name: "Frigo Camelo", income: 1500, icon: "🐪" },
     { name: "Orangutini Ananasini", income: 1700, icon: "🦧" },
@@ -75,7 +70,6 @@ const BRAINROT_DATA = {
     { name: "Eaglucci Cocosucci", income: 4700, icon: "🦅" },
     { name: "Ganganzelli Trulala", income: 5000, icon: "🎭" }
   ],
-  // Mythical (6K-25.25K/s)
   mythical: [
     { name: "Cocofanto Elefanto", income: 6000, icon: "🐘" },
     { name: "Giraffa Celeste", income: 7000, icon: "🦒" },
@@ -90,9 +84,8 @@ const BRAINROT_DATA = {
     { name: "Tukanno Bananno", income: 21000, icon: "🐦" },
     { name: "Ballerino Lololo", income: 25250, icon: "🕺" }
   ],
-  // Cosmic (22K-240K/s)
   cosmic: [
-    { name: "La Vacca Saturno", income: 22000, icon: "🪐" },
+    { name: "La Vacca Saturno Saturnita", income: 22000, icon: "🪐" },
     { name: "Torrtuginni Dragonfrutini", income: 30000, icon: "🐢" },
     { name: "Los Tralaleritos", income: 48000, icon: "🦈" },
     { name: "Las Tralaleritas", income: 50000, icon: "🦈" },
@@ -110,7 +103,6 @@ const BRAINROT_DATA = {
     { name: "Vroosh Boosh", income: 240000, icon: "💨" },
     { name: "Gatti Marshmallini", income: 999999, icon: "🐱" }
   ],
-  // Secret (200K-9.36M/s)
   secret: [
     { name: "Matteo", income: 200000, icon: "👤" },
     { name: "Gattatino Neonino", income: 250000, icon: "😺" },
@@ -124,10 +116,9 @@ const BRAINROT_DATA = {
     { name: "Rainbow 67", income: 800000, icon: "🌈" },
     { name: "Fragola La La La", income: 1000000, icon: "🍓" },
     { name: "Eek Eek Eek Sahur", income: 1050000, icon: "🐒" },
-    { name: "La Vacca Black Hole Goat", income: 1200000, icon: "🕳️" },
-    { name: "Bambooini Bombini", income: 1140000, icon: "🎋" },
+    { name: "Bamboonini Bombini", income: 1140000, icon: "🎋" },
     { name: "Mastodontico Telepiedone", income: 1420000, icon: "📺" },
-    { name: "Tartarughi Attrezzini", income: 3070000, icon: "🐢" },
+    { name: "La Vacca Black Hole Goat", income: 1200000, icon: "🕳️" },
     { name: "Tractoro Dinosauro", income: 4650000, icon: "🚜" },
     { name: "Capybara Monitora", income: 5090000, icon: "💻" },
     { name: "Kissarini Heartini", income: 5250000, icon: "💋" },
@@ -136,11 +127,10 @@ const BRAINROT_DATA = {
     { name: "Onionello Penguini", income: 6450000, icon: "🧅" },
     { name: "Scaldarino Derpino", income: 7050000, icon: "🔥" },
     { name: "Marietti Frigo", income: 7500000, icon: "❄️" },
-    { name: "Sausaggini Sanitario", income: 9360000, icon: "🧼" }
+    { name: "Tartarughi Attrezzini", income: 3070000, icon: "🐢" },
+    { name: "Tostino Flambante", income: 0, icon: "🔥" }
   ],
-  // Celestial (2M-15.5M/s)
   celestial: [
-    { name: "Caffe Trinity", income: 2000000, icon: "☕" },
     { name: "Job Job Job Sahur", income: 7500000, icon: "💼" },
     { name: "Dug Dug Dug", income: 8000000, icon: "⛏️" },
     { name: "Bisonte Giuppitere", income: 8500000, icon: "🦬" },
@@ -158,7 +148,6 @@ const BRAINROT_DATA = {
     { name: "Rattini Machini", income: 15250000, icon: "🐭" },
     { name: "Ketupastro Infernetto", income: 15500000, icon: "🔥" }
   ],
-  // Divine (30M-95M/s)
   divine: [
     { name: "Bulbito Bandito Traktorito", income: 30000000, icon: "🚜" },
     { name: "Burgerini Bearini", income: 35000000, icon: "🍔" },
@@ -174,9 +163,9 @@ const BRAINROT_DATA = {
     { name: "Rubichetto Cubini", income: 88800000, icon: "🎲" },
     { name: "Freezeti Cobretti", income: 90000000, icon: "❄️" },
     { name: "Cupitron Consoletron", income: 92500000, icon: "🎮" },
-    { name: "Draculini Meowlini", income: 95000000, icon: "🧛" }
+    { name: "Draculini Meowlini", income: 95000000, icon: "🧛" },
+    { name: "Cornettino Fuaco", income: 0, icon: "🥐" }
   ],
-  // Infinity (250M+)
   infinity: [
     { name: "Noobini Infeeny", income: 250000000, icon: "👶" },
     { name: "Anububu", income: 375000000, icon: "🐕" },
@@ -185,46 +174,32 @@ const BRAINROT_DATA = {
   ]
 };
 
-// Tsunami types
-const TSUNAMI_TYPES = [
-  { name: "Super Slow", color: "#00ff88", speed: "Very Slow" },
-  { name: "Slow", color: "#88ff00", speed: "Slow" },
-  { name: "Medium", color: "#ffff00", speed: "Medium" },
-  { name: "Fast", color: "#ff8800", speed: "Fast" },
-  { name: "Lightning", color: "#ff0088", speed: "Extreme" },
-  { name: "Beast", color: "#ff0000", speed: "Instant" }
-];
+// Helper to find brainrot info by name
+function findBrainrotInfo(name) {
+  for (const [rarity, list] of Object.entries(BRAINROT_DATA)) {
+    const found = list.find(b => b.name.toLowerCase() === name.toLowerCase());
+    if (found) return { ...found, rarity };
+  }
+  return null;
+}
 
 // Create new account structure
 const createAccount = (username) => ({
   username: username || "Unknown",
   inventory: {},
-  stats: {
-    speed: 0,
-    maxSpeed: 15670,
-    carry: 1,
-    maxCarry: 7,
-    rebirth: 0,
-    maxRebirth: 27,
-    money: 0,
-    baseLevel: 1,
-    maxBaseLevel: 40
+  rawStats: {},
+  calculated: {
+    totalIncome: 0,
+    totalBrainrots: 0,
+    rarityCounts: {}
   },
-  currentWave: {
-    active: false,
-    type: null,
-    timeRemaining: 0
-  },
-  location: "Safe Zone",
+  location: "Unknown",
   status: "Idle",
   lastUpdate: new Date().toLocaleString()
 });
 
-// Initialize
-let latest = createAccount("Player1");
-
 app.post('/update', (req, res) => {
-  const { username, ...data } = req.body;
+  const { username, inventory, stats, location, status, wave } = req.body;
   
   if (!username) {
     return res.status(400).json({ error: "Username required" });
@@ -232,42 +207,51 @@ app.post('/update', (req, res) => {
 
   const account = accounts.get(username) || createAccount(username);
   
-  // Update inventory
-  if (data.inventory) {
-    Object.entries(data.inventory).forEach(([brainrotName, count]) => {
-      if (count > 0) {
-        account.inventory[brainrotName] = count;
-      } else {
-        delete account.inventory[brainrotName];
+  // Update inventory from Lua script format
+  if (inventory && typeof inventory === 'object') {
+    account.inventory = inventory;
+    
+    // Calculate totals
+    let totalIncome = 0;
+    let totalBrainrots = 0;
+    const rarityCounts = {};
+    
+    Object.entries(inventory).forEach(([brainrotName, count]) => {
+      const info = findBrainrotInfo(brainrotName);
+      if (info) {
+        totalIncome += (info.income || 0) * count;
+        totalBrainrots += count;
+        rarityCounts[info.rarity] = (rarityCounts[info.rarity] || 0) + count;
       }
     });
+    
+    account.calculated = {
+      totalIncome,
+      totalBrainrots,
+      rarityCounts
+    };
   }
   
-  // Update stats
-  if (data.stats) {
-    Object.assign(account.stats, data.stats);
+  // Store raw stats from leaderstats
+  if (stats) {
+    account.rawStats = stats;
   }
   
-  // Update wave status
-  if (data.wave) {
-    account.currentWave = data.wave;
-  }
-  
-  // Update location and status
-  if (data.location) account.location = data.location;
-  if (data.status) account.status = data.status;
+  // Update other fields
+  if (location) account.location = location;
+  if (status) account.status = status;
+  if (wave) account.wave = wave;
   
   account.lastUpdate = new Date().toLocaleString();
   accounts.set(username, account);
-  latest = account;
   
-  console.log(`[${username}] Updated:`, {
-    brainrots: Object.keys(account.inventory).length,
-    money: account.stats.money,
-    status: account.status
+  console.log(`[${username}] Updated: ${account.calculated.totalBrainrots} brainrots, $${account.calculated.totalIncome}/s`);
+  
+  res.json({ 
+    ok: true, 
+    message: `Updated ${account.calculated.totalBrainrots} brainrots`,
+    income: account.calculated.totalIncome
   });
-  
-  res.json({ ok: true, account });
 });
 
 app.get('/data', (req, res) => {
@@ -275,7 +259,7 @@ app.get('/data', (req, res) => {
   if (user && accounts.has(user)) {
     res.json(accounts.get(user));
   } else {
-    res.json(latest);
+    res.json(Array.from(accounts.values()));
   }
 });
 
@@ -294,7 +278,7 @@ app.get('/', (req, res) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌊 Escape Tsunami For Brainrots - Multi-Account Dashboard</title>
+  <title>🌊 Escape Tsunami For Brainrots - Dashboard</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
     
@@ -355,24 +339,6 @@ app.get('/', (req, res) => {
       border-radius: 20px;
       backdrop-filter: blur(10px);
       box-shadow: 0 0 40px rgba(0, 150, 255, 0.2);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    header::before {
-      content: '🌊';
-      position: absolute;
-      font-size: 100px;
-      opacity: 0.1;
-      top: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      animation: float 3s ease-in-out infinite;
-    }
-    
-    @keyframes float {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(-10px); }
     }
     
     h1 {
@@ -410,8 +376,6 @@ app.get('/', (req, res) => {
       font-family: 'Orbitron', sans-serif;
       font-size: 0.9em;
       transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
     }
     
     .tab-btn:hover, .tab-btn.active {
@@ -421,25 +385,9 @@ app.get('/', (req, res) => {
       color: #fff;
     }
     
-    .tab-btn.active::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, #00ffff, transparent);
-      animation: scan 2s linear infinite;
-    }
-    
-    @keyframes scan {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
-    
     .dashboard {
       display: grid;
-      grid-template-columns: 300px 1fr;
+      grid-template-columns: 350px 1fr;
       gap: 20px;
       margin-bottom: 20px;
     }
@@ -466,56 +414,35 @@ app.get('/', (req, res) => {
       padding-bottom: 10px;
     }
     
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px;
-      margin-bottom: 10px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 10px;
-      border-left: 3px solid;
+    .stat-card {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 12px;
+      border-left: 4px solid;
     }
     
     .stat-label {
       color: #88aabb;
-      font-size: 0.9em;
+      font-size: 0.85em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     
     .stat-value {
       font-family: 'Orbitron', sans-serif;
+      font-size: 1.4em;
       font-weight: 700;
       color: #fff;
+      margin-top: 5px;
     }
     
-    .wave-alert {
-      background: rgba(255, 0, 0, 0.2);
-      border: 2px solid #ff0044;
-      border-radius: 15px;
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 20px;
-      animation: pulse-red 1s infinite;
-      display: none;
+    .income-display {
+      background: linear-gradient(135deg, rgba(0,255,136,0.2), rgba(0,0,0,0.4));
+      border: 2px solid #00ff88;
     }
     
-    .wave-alert.active {
-      display: block;
-    }
-    
-    @keyframes pulse-red {
-      0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 68, 0.4); }
-      50% { box-shadow: 0 0 40px rgba(255, 0, 68, 0.8); }
-    }
-    
-    .wave-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.5em;
-      color: #ff0044;
-      margin-bottom: 10px;
-    }
-    
-    .inventory-section {
+    .inventory-panel {
       background: rgba(0, 20, 40, 0.7);
       border: 1px solid rgba(0, 150, 255, 0.2);
       border-radius: 20px;
@@ -524,37 +451,38 @@ app.get('/', (req, res) => {
     }
     
     .rarity-section {
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
     
     .rarity-header {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 15px;
-      padding: 10px;
+      justify-content: space-between;
+      padding: 10px 15px;
       background: rgba(0, 0, 0, 0.4);
       border-radius: 10px;
+      margin-bottom: 10px;
       font-family: 'Orbitron', sans-serif;
       text-transform: uppercase;
       letter-spacing: 2px;
+      font-size: 0.9em;
     }
     
-    .rarity-common { color: var(--common); border-left: 4px solid var(--common); }
-    .rarity-uncommon { color: var(--uncommon); border-left: 4px solid var(--uncommon); }
-    .rarity-rare { color: var(--rare); border-left: 4px solid var(--rare); }
-    .rarity-epic { color: var(--epic); border-left: 4px solid var(--epic); }
-    .rarity-legendary { color: var(--legendary); border-left: 4px solid var(--legendary); }
-    .rarity-mythical { color: var(--mythical); border-left: 4px solid var(--mythical); }
-    .rarity-cosmic { color: var(--cosmic); border-left: 4px solid var(--cosmic); }
-    .rarity-secret { color: var(--secret); border-left: 4px solid var(--secret); }
-    .rarity-celestial { color: var(--celestial); border-left: 4px solid var(--celestial); }
-    .rarity-divine { color: var(--divine); border-left: 4px solid var(--divine); }
-    .rarity-infinity { color: var(--infinity); border-left: 4px solid var(--infinity); }
+    .rarity-common { border-left: 4px solid var(--common); color: var(--common); }
+    .rarity-uncommon { border-left: 4px solid var(--uncommon); color: var(--uncommon); }
+    .rarity-rare { border-left: 4px solid var(--rare); color: var(--rare); }
+    .rarity-epic { border-left: 4px solid var(--epic); color: var(--epic); }
+    .rarity-legendary { border-left: 4px solid var(--legendary); color: var(--legendary); }
+    .rarity-mythical { border-left: 4px solid var(--mythical); color: var(--mythical); }
+    .rarity-cosmic { border-left: 4px solid var(--cosmic); color: var(--cosmic); }
+    .rarity-secret { border-left: 4px solid var(--secret); color: var(--secret); }
+    .rarity-celestial { border-left: 4px solid var(--celestial); color: var(--celestial); text-shadow: 0 0 10px var(--celestial); }
+    .rarity-divine { border-left: 4px solid var(--divine); color: var(--divine); }
+    .rarity-infinity { border-left: 4px solid var(--infinity); color: var(--infinity); text-shadow: 0 0 10px var(--infinity); }
     
     .brainrot-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
       gap: 10px;
     }
     
@@ -562,21 +490,15 @@ app.get('/', (req, res) => {
       background: rgba(0, 0, 0, 0.5);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
-      padding: 15px;
+      padding: 12px;
       text-align: center;
       transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
     }
     
     .brainrot-card:hover {
       transform: translateY(-3px);
       box-shadow: 0 5px 20px rgba(0, 200, 255, 0.3);
-    }
-    
-    .brainrot-card.owned {
-      border-color: rgba(0, 255, 136, 0.5);
-      background: rgba(0, 255, 136, 0.1);
+      border-color: rgba(0, 200, 255, 0.5);
     }
     
     .brainrot-icon {
@@ -587,7 +509,7 @@ app.get('/', (req, res) => {
     .brainrot-name {
       font-size: 0.75em;
       color: #aaa;
-      margin-bottom: 5px;
+      margin-bottom: 3px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -595,34 +517,70 @@ app.get('/', (req, res) => {
     
     .brainrot-count {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.2em;
+      font-size: 1.3em;
       font-weight: 700;
     }
     
-    .income-display {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: rgba(0, 0, 0, 0.9);
-      border: 2px solid #00ff88;
+    .brainrot-income {
+      font-size: 0.7em;
+      color: #00ff88;
+      margin-top: 3px;
+    }
+    
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .summary-card {
+      background: rgba(0, 20, 40, 0.7);
+      border: 1px solid rgba(0, 150, 255, 0.2);
       border-radius: 15px;
       padding: 20px;
-      min-width: 250px;
-      box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+      cursor: pointer;
+      transition: all 0.3s;
     }
     
-    .income-label {
-      color: #88aa99;
-      font-size: 0.9em;
-      text-transform: uppercase;
-      letter-spacing: 2px;
+    .summary-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 150, 255, 0.3);
+      border-color: rgba(0, 200, 255, 0.5);
     }
     
-    .income-value {
+    .summary-username {
       font-family: 'Orbitron', sans-serif;
-      font-size: 2em;
-      color: #00ff88;
-      text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+      font-size: 1.4em;
+      color: #00ffff;
+      margin-bottom: 10px;
+    }
+    
+    .summary-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .summary-stat {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .summary-label {
+      font-size: 0.75em;
+      color: #88aabb;
+      text-transform: uppercase;
+    }
+    
+    .summary-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2em;
+      color: #fff;
+      margin-top: 5px;
     }
     
     .connection-status {
@@ -636,6 +594,7 @@ app.get('/', (req, res) => {
       padding: 10px 20px;
       border-radius: 20px;
       border: 1px solid rgba(0, 255, 0, 0.3);
+      z-index: 100;
     }
     
     .status-dot {
@@ -652,90 +611,18 @@ app.get('/', (req, res) => {
       50% { opacity: 0.3; }
     }
     
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 5px;
-    }
-    
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #00ffff, #0088ff);
-      transition: width 0.5s;
-    }
-    
-    .summary-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-    
-    .summary-card {
-      background: rgba(0, 20, 40, 0.7);
-      border: 1px solid rgba(0, 150, 255, 0.2);
-      border-radius: 15px;
-      padding: 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .summary-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(0, 150, 255, 0.3);
-    }
-    
-    .summary-username {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.3em;
-      color: #00ffff;
-      margin-bottom: 10px;
-    }
-    
-    .summary-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 15px;
-    }
-    
-    .summary-stat {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 10px;
-      border-radius: 8px;
-    }
-    
-    .summary-label {
-      font-size: 0.8em;
-      color: #88aabb;
-    }
-    
-    .summary-value {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.2em;
-      color: #fff;
-    }
-    
-    .location-badge {
-      display: inline-block;
-      padding: 5px 15px;
-      border-radius: 15px;
-      font-size: 0.85em;
-      margin-top: 10px;
-    }
-    
-    .location-safe { background: rgba(0, 255, 136, 0.2); color: #00ff88; }
-    .location-danger { background: rgba(255, 0, 68, 0.2); color: #ff0044; }
-    
-    .empty-inventory {
+    .empty-state {
       text-align: center;
       padding: 60px;
       color: #556677;
       font-style: italic;
+    }
+    
+    .last-update {
+      text-align: center;
+      color: #556677;
+      font-size: 0.9em;
+      margin-top: 20px;
     }
   </style>
 </head>
@@ -756,14 +643,7 @@ app.get('/', (req, res) => {
       </div>
     </header>
     
-    <div id="mainContent">
-      <!-- Dynamic content loaded here -->
-    </div>
-    
-    <div class="income-display" id="incomeDisplay" style="display: none;">
-      <div class="income-label">💰 Total Income/sec</div>
-      <div class="income-value" id="totalIncome">$0</div>
-    </div>
+    <div id="mainContent"></div>
   </div>
 
   <script>
@@ -771,8 +651,7 @@ app.get('/', (req, res) => {
     let accounts = [];
     let brainrotData = {};
     let refreshInterval;
-    
-    // Fetch all brainrot definitions
+
     async function loadBrainrotData() {
       try {
         const res = await fetch('/brainrots');
@@ -781,7 +660,7 @@ app.get('/', (req, res) => {
         console.error('Failed to load brainrot data');
       }
     }
-    
+
     async function fetchData() {
       try {
         const res = await fetch('/accounts');
@@ -795,25 +674,21 @@ app.get('/', (req, res) => {
         document.querySelector('.status-dot').style.background = '#ff0044';
       }
     }
-    
+
     function updateUI() {
       updateTabs();
-      
       if (currentView === 'all') {
         renderAllAccounts();
-        document.getElementById('incomeDisplay').style.display = 'none';
       } else {
         renderSingleAccount(currentView);
-        document.getElementById('incomeDisplay').style.display = 'block';
       }
     }
-    
+
     function updateTabs() {
       const tabsContainer = document.getElementById('accountTabs');
-      // Keep the "All Accounts" button
       const existingTabs = tabsContainer.querySelectorAll('.tab-btn:not(:first-child)');
       existingTabs.forEach(tab => tab.remove());
-      
+
       accounts.forEach(acc => {
         const btn = document.createElement('button');
         btn.className = 'tab-btn' + (acc.username === currentView ? ' active' : '');
@@ -822,7 +697,7 @@ app.get('/', (req, res) => {
         tabsContainer.appendChild(btn);
       });
     }
-    
+
     function switchView(view) {
       currentView = view;
       document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -833,43 +708,46 @@ app.get('/', (req, res) => {
       });
       updateUI();
     }
-    
+
+    function formatMoney(num) {
+      if (!num) return '0';
+      if (num >= 1000000000) return (num/1000000000).toFixed(2) + 'B';
+      if (num >= 1000000) return (num/1000000).toFixed(2) + 'M';
+      if (num >= 1000) return (num/1000).toFixed(1) + 'K';
+      return num.toLocaleString();
+    }
+
     function renderAllAccounts() {
       const container = document.getElementById('mainContent');
       
       if (accounts.length === 0) {
-        container.innerHTML = '<div class="empty-inventory">No accounts found. Waiting for data...</div>';
+        container.innerHTML = '<div class="empty-state">No accounts found. Execute the Lua script in Roblox to start tracking.</div>';
         return;
       }
-      
+
       let html = '<div class="summary-cards">';
       accounts.forEach(acc => {
-        const totalBrainrots = Object.values(acc.inventory).reduce((a, b) => a + b, 0);
-        const income = calculateIncome(acc.inventory);
-        
+        const calc = acc.calculated || {};
+        const rarityText = Object.entries(calc.rarityCounts || {})
+          .map(([r, c]) => \`\${c} \${r.charAt(0).toUpperCase() + r.slice(1)}\`)
+          .join(', ') || 'None';
+
         html += \`
           <div class="summary-card" onclick="switchView('\${acc.username}')">
             <div class="summary-username">\${acc.username}</div>
-            <div class="location-badge \${acc.currentWave.active ? 'location-danger' : 'location-safe'}">
-              \${acc.currentWave.active ? '⚠️ ' + acc.currentWave.type : '✅ Safe'}
-            </div>
+            <div style="color: #88aabb; font-size: 0.9em;">\${acc.status}</div>
             <div class="summary-stats">
               <div class="summary-stat">
                 <div class="summary-label">Brainrots</div>
-                <div class="summary-value">\${totalBrainrots}</div>
+                <div class="summary-value" style="color: #00ffff;">\${calc.totalBrainrots || 0}</div>
               </div>
               <div class="summary-stat">
-                <div class="summary-label">$/sec</div>
-                <div class="summary-value">\${formatMoney(income)}</div>
+                <div class="summary-label">Income/sec</div>
+                <div class="summary-value" style="color: #00ff88;">$\${formatMoney(calc.totalIncome)}</div>
               </div>
-              <div class="summary-stat">
-                <div class="summary-label">Rebirth</div>
-                <div class="summary-value">\${acc.stats.rebirth}</div>
-              </div>
-              <div class="summary-stat">
-                <div class="summary-label">Speed</div>
-                <div class="summary-value">\${acc.stats.speed}</div>
-              </div>
+            </div>
+            <div style="margin-top: 10px; font-size: 0.8em; color: #667788; text-align: center;">
+              \${rarityText}
             </div>
           </div>
         \`;
@@ -877,138 +755,111 @@ app.get('/', (req, res) => {
       html += '</div>';
       container.innerHTML = html;
     }
-    
+
     function renderSingleAccount(username) {
       const account = accounts.find(a => a.username === username);
       if (!account) return;
-      
+
       const container = document.getElementById('mainContent');
-      const totalIncome = calculateIncome(account.inventory);
-      
-      let html = '';
-      
-      // Wave Alert
-      html += \`
-        <div class="wave-alert \${account.currentWave.active ? 'active' : ''}">
-          <div class="wave-title">🌊 TSUNAMI WARNING 🌊</div>
-          <div>\${account.currentWave.type || 'Unknown'} Wave Incoming!</div>
-          <div style="margin-top: 10px; font-size: 1.2em;">Time: \${account.currentWave.timeRemaining || 0}s</div>
-        </div>
-      \`;
-      
-      html += '<div class="dashboard">';
-      
-      // Stats Panel
+      const calc = account.calculated || {};
+      const inventory = account.inventory || {};
+
+      let html = '<div class="dashboard">';
+
+      // Left Panel - Stats
       html += \`
         <div class="stats-panel">
-          <div class="panel-title">📊 PLAYER STATS</div>
+          <div class="panel-title">👤 \${account.username}</div>
           
-          <div class="stat-row" style="border-color: #00ffff;">
-            <span class="stat-label">💰 Money</span>
-            <span class="stat-value">\${formatMoney(account.stats.money)}</span>
+          <div class="stat-card income-display">
+            <div class="stat-label">Total Income / Second</div>
+            <div class="stat-value" style="color: #00ff88;">$\${formatMoney(calc.totalIncome)}</div>
           </div>
-          
-          <div class="stat-row" style="border-color: #ff00ff;">
-            <span class="stat-label">⚡ Speed</span>
-            <span class="stat-value">\${account.stats.speed} / \${account.stats.maxSpeed}</span>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: \${(account.stats.speed/account.stats.maxSpeed)*100}%"></div>
+
+          <div class="stat-card" style="border-color: #00ffff;">
+            <div class="stat-label">Total Brainrots</div>
+            <div class="stat-value">\${calc.totalBrainrots || 0}</div>
+          </div>
+
+          <div class="stat-card" style="border-color: #ff00ff;">
+            <div class="stat-label">Location</div>
+            <div class="stat-value" style="font-size: 1.1em;">\${account.location}</div>
+          </div>
+
+          <div class="stat-card" style="border-color: #ffaa00;">
+            <div class="stat-label">Status</div>
+            <div class="stat-value" style="font-size: 1.1em;">\${account.status}</div>
+          </div>
+      \`;
+
+      // Raw stats from Roblox
+      if (account.rawStats && Object.keys(account.rawStats).length > 0) {
+        html += '<div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">';
+        html += '<div style="color: #88aabb; font-size: 0.8em; margin-bottom: 10px;">RAW STATS</div>';
+        Object.entries(account.rawStats).forEach(([key, value]) => {
+          html += \`
+            <div style="display: flex; justify-content: space-between; padding: 5px 0; font-size: 0.9em;">
+              <span style="color: #667788;">\${key}</span>
+              <span style="color: #fff; font-family: Orbitron;">\${value}</span>
             </div>
-          </div>
-          
-          <div class="stat-row" style="border-color: #ffaa00;">
-            <span class="stat-label">🎒 Carry</span>
-            <span class="stat-value">\${account.stats.carry} / \${account.stats.maxCarry}</span>
-          </div>
-          
-          <div class="stat-row" style="border-color: #ff0066;">
-            <span class="stat-label">♻️ Rebirth</span>
-            <span class="stat-value">\${account.stats.rebirth} / \${account.stats.maxRebirth}</span>
-          </div>
-          
-          <div class="stat-row" style="border-color: #00ff88;">
-            <span class="stat-label">🏠 Base Level</span>
-            <span class="stat-value">\${account.stats.baseLevel} / \${account.stats.maxBaseLevel}</span>
-          </div>
-          
-          <div class="stat-row" style="border-color: #aa00ff;">
-            <span class="stat-label">📍 Location</span>
-            <span class="stat-value">\${account.location}</span>
-          </div>
-          
-          <div class="stat-row" style="border-color: #0088ff;">
-            <span class="stat-label">Status</span>
-            <span class="stat-value">\${account.status}</span>
-          </div>
+          \`;
+        });
+        html += '</div>';
+      }
+
+      html += \`
+          <div class="last-update">Last update: \${account.lastUpdate}</div>
         </div>
       \`;
-      
-      // Inventory Panel
-      html += '<div class="inventory-section">';
-      html += '<div class="panel-title">🧠 BRAINROT COLLECTION</div>';
-      
-      if (Object.keys(account.inventory).length === 0) {
-        html += '<div class="empty-inventory">No brainrots collected yet. Go survive that tsunami!</div>';
+
+      // Right Panel - Inventory
+      html += '<div class="inventory-panel">';
+      html += '<div class="panel-title">🧠 BRAINROT INVENTORY</div>';
+
+      if (Object.keys(inventory).length === 0) {
+        html += '<div class="empty-state">No brainrots found. Open your inventory in-game and execute the tracker.</div>';
       } else {
         // Group by rarity
         Object.entries(brainrotData).forEach(([rarity, brainrots]) => {
-          const owned = brainrots.filter(b => account.inventory[b.name]);
+          const owned = brainrots.filter(b => inventory[b.name] > 0);
           if (owned.length > 0) {
+            const totalInRarity = owned.reduce((sum, b) => sum + (inventory[b.name] || 0), 0);
+            
             html += \`
               <div class="rarity-section">
                 <div class="rarity-header rarity-\${rarity}">
                   <span>\${rarity}</span>
-                  <span style="margin-left: auto; font-size: 0.8em;">\${owned.length} owned</span>
+                  <span>\${owned.length} types • \${totalInRarity} total</span>
                 </div>
                 <div class="brainrot-grid">
             \`;
-            
+
             owned.forEach(b => {
-              const count = account.inventory[b.name];
+              const count = inventory[b.name] || 0;
+              const income = (b.income || 0) * count;
               html += \`
-                <div class="brainrot-card owned">
+                <div class="brainrot-card">
                   <div class="brainrot-icon">\${b.icon}</div>
                   <div class="brainrot-name">\${b.name}</div>
                   <div class="brainrot-count" style="color: var(--\${rarity})">x\${count}</div>
-                  <div style="font-size: 0.7em; color: #666; margin-top: 5px;">$\${formatMoney(b.income)}/s</div>
+                  <div class="brainrot-income">$\${formatMoney(b.income)}/s</div>
                 </div>
               \`;
             });
-            
+
             html += '</div></div>';
           }
         });
       }
-      
-      html += '</div>'; // End inventory-section
-      html += '</div>'; // End dashboard
-      
+
+      html += '</div></div>'; // End inventory-panel and dashboard
       container.innerHTML = html;
-      document.getElementById('totalIncome').textContent = '$' + formatMoney(totalIncome);
     }
-    
-    function calculateIncome(inventory) {
-      let total = 0;
-      Object.entries(inventory).forEach(([name, count]) => {
-        Object.values(brainrotData).flat().forEach(b => {
-          if (b.name === name) {
-            total += (b.income || 0) * count;
-          }
-        });
-      });
-      return total;
-    }
-    
-    function formatMoney(num) {
-      if (num >= 1000000) return (num/1000000).toFixed(2) + 'M';
-      if (num >= 1000) return (num/1000).toFixed(1) + 'K';
-      return num.toString();
-    }
-    
+
     // Initialize
     loadBrainrotData();
     fetchData();
-    refreshInterval = setInterval(fetchData, 3000);
+    refreshInterval = setInterval(fetchData, 5000);
   </script>
 </body>
 </html>
